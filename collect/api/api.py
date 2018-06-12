@@ -20,15 +20,16 @@ def pd_fetch_tourspot_visitor(district1='', district2='', tourspot='', year=0, m
                      GUNGU=district2,
                      RES_NM='',
                      numOfRows=10,
-                     _type='json',
-                     pageNo=1)
+                     _type='json'
+                     )
     # print(district1)
     isnext = True
     while isnext is True:
         json_result = json_request(url=url)
-        posts = None if json_result is None else json_result.get('response').get('body').get('items')
+        pos = None if json_result is None else json_result.get('response').get('body').get('items')
+        posts = None if json_result is None else json_result.get('response').get('body').get('items').get('item')
 
-        url = None if posts is None else posts.get("next")
+        url = None if posts is None else pos.get("totalCount")
         isnext = url is not None
         yield posts
 
