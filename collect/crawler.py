@@ -1,4 +1,4 @@
-from .api.api import *
+from .api import api
 import os
 import json
 from analysis_pd.collect.api import api
@@ -9,27 +9,23 @@ pagename = 'jtbcnews'
 since = '2016-01-01'
 until = '2017-04-31'
 
-url = fb_gen_url(endpoint=END_POINT, service_key=SERVICE_KEY,
-                  resultCode='',
-                  resultMsg='',
-                  numOfRows='',
-                  pageNo='',
-                  totalCount='',
-                  addrCd='',
-                  csForCnt='',
-                  scNatCnt='',
-                  gungu='',
-                  resNm='',
-                  sido='',
-                  ym='')
+# url = fb_gen_url(endpoint=END_POINT, service_key=SERVICE_KEY,
+#                   resultCode='',
+#                   resultMsg='',
+#                   numOfRows='',
+#                   pageNo='',
+#                   totalCount='',
+#                   addrCd='',
+#                   csForCnt='',
+#                   scNatCnt='',
+#                   gungu='',
+#                   resNm='',
+#                   sido='',
+#                   ym='')
 
-def pd_gen_url(endpoint=END_POINT, service_key=SERVICE_KEY, **params):
-    url = '%s?serviceKey=%s&%s' % (endpoint, service_key, urlencode(params))
-    print(url)
+def pd_gen_url(endpoint, **param):
+    url = '%s?%s&serviceKey=%s' % (endpoint, urlencode(param), SERVICE_KEY)
     return url
-
-print(url)
-
 
 # ------------------------------------------------------
 def preprocess_tourspot_visitor(item):
@@ -37,17 +33,51 @@ def preprocess_tourspot_visitor(item):
 
 
 def preprocess_foreign_visitor(data):
-       pass
+    # ed
+    del data['ed']
+
+    # edCd
+    del data['edCd']
+
+    # rnum
+    del data['rnum']
+
+    # 나라코드
+    data['conutry_code'] = data['natCd']
+    del data['natCd']
+
+    # 나라이름
+    data['conutry_name'] = data['natKorNm'].replace(' ', '')
+    del data['natKorNm']
+
+    # 방문자 수
+    data['visit_count'] = data['num']
+    del data['num']
+
+    # 년월
+    if 'ym' not in data:
+        data['data'] = ''
+    else:
+        data['data'] = data['ym']
+        del data['ym']
 
 
-def crawling_foreign_visitor(
-        country,
-        start_year,
-        end_year,
-        restore_directory,
-        service_key,
-        fetch=True):
-    pass
+def crawling_foreign_visitor(country, start_year, end_year):
+    result = []
+    for year in range(start_year, end_year+1):
+        for month in range(1, 13):
+            data = api.pd_fetch_foreign_visitor(country[1], year, month)
+            if data is None:
+                continue
+
+            preprocess_foreign_visitor(data)
+            result.append(data)
+
+    # save data to file
+    print(result)
+
+
+
 
 
 def crawling_tourspot_visitor(district, start_year, end_year):

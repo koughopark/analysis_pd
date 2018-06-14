@@ -3,24 +3,24 @@ from urllib.parse import urlencode
 from .web_request import json_request
 
 
-END_POINT = 'http://openapi.tour.go.kr/openapi/service/TourismResourceStatsService/getPchrgTrrsrtVisitorList'
+
 SERVICE_KEY = 'bpU9ConJZs44J4b%2FbIStu29uOgtlQ%2Fvl%2BMma1RXL5c2vz8Wdayhg33wAmEqn51Mf2loTqXUr%2BGI9QsfMdFjKXQ%3D%3D'
 
 
-def pd_gen_url(endpoint=END_POINT, service_key=SERVICE_KEY, **params):
-    url = '%s?serviceKey=%s&%s' % (endpoint, service_key, urlencode(params))
-    print(url)
+def pd_gen_url(endpoint, **param):
+    url = '%s?%s&serviceKey=%s' % (endpoint, urlencode(param), SERVICE_KEY)
     return url
 
 
-def pd_fetch_foreign_visitor(country_code=0, year=0, month=0):
+def pd_fetch_foreign_visitor(country_code, year, month):
     endpoint = 'http://openapi.tour.go.kr/openapi/service/EdrcntTourismStatsService/getEdrcntTourismStatsList'
-    url = pd_gen_url(endpoint,
-                     YM='{0:04d}{1:02d}'.format(year, month),
-                     NAT_CD = country_code,
-                     ED_CD='E',
-                     _type='json'
-                     )
+    url = pd_gen_url(
+        endpoint,
+        YM='{0:04d}{1:02d}'.format(year, month),
+        NAT_CD=country_code,
+        ED_CD='E',
+        _type='json'
+        )
     json_result = json_request(url=url)
 
     json_response = json_result.get('response')
@@ -37,8 +37,9 @@ def pd_fetch_foreign_visitor(country_code=0, year=0, month=0):
 
 
 
-def pd_fetch_tourspot_visitor(district1='', district2='', tourspot='', year=0, month=0):
-    url = pd_gen_url(endpoint=END_POINT,
+def pd_fetch_tourspot_visitor(district1='', district2='', tourspot='', year=0, month=0): # 위에 형식처럼 고쳐보장
+    endpoint = 'http://openapi.tour.go.kr/openapi/service/TourismResourceStatsService/getPchrgTrrsrtVisitorList'
+    url = pd_gen_url(endpoint,
                      YM='{0:04d}{1:02d}'.format(year, month),
                      SIDO=district1,
                      GUNGU=district2,
@@ -48,7 +49,7 @@ def pd_fetch_tourspot_visitor(district1='', district2='', tourspot='', year=0, m
                      pageNo='',
                      _type='json',
                      )
-    # print(district1)
+
     isnext = True
     while isnext is True:
         json_result = json_request(url)
