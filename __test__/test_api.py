@@ -13,9 +13,12 @@ import analysis_pd.collect.api.api as pdapi
 #
 # print(url)
 
-# for item in pdapi.pd_fetch_tourspot_visitor(district1="서울특별시", year=2012, month=7):
-item = pdapi.pd_fetch_tourspot_visitor(district1="서울특별시", year=2012, month=7)
-print(item)
+# test for .pd_fetch_tourspot_visitor
+for items in pdapi.pd_fetch_tourspot_visitor(district1="서울특별시", year=2012, month=7):
+    for item in items:
+        print(item)
+# item = pdapi.pd_fetch_tourspot_visitor(district1="서울특별시", year=2012, month=7)
+# print(item)
 #     for i in item.get('response').get('body').get('items').get('item'):
 #         print("item : ", i)
 
