@@ -85,6 +85,8 @@ def crawling_foreign_visitor(country, start_year, end_year):
                                  ensure_ascii=False)  # json str으로 덤프하는 과정 텝을 4정도 주고 솔팅을 해라 모두 아스키코드로 해라
         outfile.write(json_string)
 
+    return
+
 
 if os.path.exists(RESULT_DIRECTORY) is False:  # import될때 실행됨
     os.makedirs(RESULT_DIRECTORY)  # 첫번째 디렉토리가 없으면 하나의 디렉토리가 생성됨
