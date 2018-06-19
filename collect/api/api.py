@@ -13,7 +13,7 @@ def pd_fetch_foreign_visitor(country_code, year, month, service_key=''):
     endpoint = 'http://openapi.tour.go.kr/openapi/service/EdrcntTourismStatsService/getEdrcntTourismStatsList'
     url = pd_gen_url(
         endpoint,
-        service_key,
+        service_key=service_key,
         YM='{0:04d}{1:02d}'.format(year, month),
         NAT_CD=country_code,
         ED_CD='E',
@@ -42,7 +42,7 @@ def pd_fetch_tourspot_visitor(district1='', district2='', tourspot='', year=0, m
 
     while hasnext is True:
         url = pd_gen_url(endpoint,
-                         service_key,
+                         service_key=service_key,
                          YM='{0:04d}{1:02d}'.format(year, month),
                          SIDO=district1,
                          GUNGU=district2,
@@ -65,27 +65,25 @@ def pd_fetch_tourspot_visitor(district1='', district2='', tourspot='', year=0, m
 
         if 'OK' != result_message:
             print('%s Error[%s] for request %s' % (datetime.now(), result_message, url))  # 에러나면 에러메세지 출력
-            return None
+            break
         # 여기까지 왔다는건 헤더를 불러오는데 성공했다는 것 ---------------------------------
 
         json_body = None if json_result is None else json_response.get('body')
-        json_items = None if json_result is None else json_body.get('items')
 
-        # json_item = None if json_result is None else json_items.get('item')
         numofrows = json_body.get('numOfRows')
         totalcount = json_body.get('totalCount')
 
-        totalCount = totalcount / numofrows
-        if totalCount == 0:
+        if totalcount == 0:
             break
 
-        last_page = math.ceil(totalcount / numofrows)
-        if pageno == last_page:
+        last_pageno = math.ceil(totalcount / numofrows)
+        if pageno == last_pageno:
             hasnext = False
         else:
             pageno += 1
 
-        yield json_items.get('item')
+        json_items = json_body.get('items')
+        yield json_items.get('item') if isinstance(json_items, dict) else None
 
     #
     # while hasnext:

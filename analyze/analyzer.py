@@ -1,7 +1,7 @@
 import json
 import pandas as pd
-import scipy.stats as ss
 import numpy as np
+import scipy.stats as ss
 import matplotlib.pyplot as plt
 import math
 
@@ -33,12 +33,10 @@ def correlation_coefficient(x, y):
 
 
 def analysis_correlation(resultfiles):
-    with open(resultfiles['tourspot_visitor'], 'r', encoding='utf_8') as infile:
+    with open(resultfiles['tourspot_visitor'], 'r', encoding='utf-8') as infile:
         json_data = json.loads(infile.read())
-        # print(json_data)
 
     tourspotvisitor_table = pd.DataFrame(json_data, columns=['count_foreigner', 'date', 'tourist_spot'])
-    # print(tourspotvisitor_table)
     temp_tourspotvisitor_table = pd.DataFrame(tourspotvisitor_table.groupby('date')['count_foreigner'].sum())
 
     results = []
@@ -47,20 +45,20 @@ def analysis_correlation(resultfiles):
             json_data = json.loads(infile.read())
 
         foreignvisitor_table = pd.DataFrame(json_data, columns=['country_name', 'date', 'visit_count'])
-        # print(foreignvisitor_table)
         foreignvisitor_table = foreignvisitor_table.set_index('date')
+
         merge_table = pd.merge(
             temp_tourspotvisitor_table,
             foreignvisitor_table,
-            left_index=True, right_index=True
-        )
+            left_index=True, right_index=True)
 
         x = list(merge_table['visit_count'])
         y = list(merge_table['count_foreigner'])
         country_name = foreignvisitor_table['country_name'].unique().item(0)
-        r = ss.pearsonr(x, y)[0]
-        # r2 = np.correlate(x, y)[0]
+        r = ss.pearsonr(x, y)[0]  # 상관계수
+        # r = np.corrcoef(x, y)[0]
         results.append({'x': x, 'y': y, 'country_name': country_name, 'r': r})
+        print(results)
 
         merge_table['visit_count'].plot(kind='bar')
         plt.show()
@@ -69,4 +67,40 @@ def analysis_correlation(resultfiles):
 
 
 def analysis_correlation_by_tourspot(resultfiles):
-    pass
+    with open(resultfiles['tourspot_visitor'], 'r', encoding='utf-8') as infile:
+        json_data = json.loads(infile.read())
+
+    tourspot_table = pd.DataFrame(json_data, columns=['count_foreigner', 'date', 'tourist_spot'])
+    tourist_spot = tourspot_table['tourist_spot'].unique()
+    print(tourist_spot)
+    # for a in tourist_spot:
+    #     temp_table = tourspot_table[tourspot_table['tourist_spot'] == a]
+    #     x = list(temp_table['visit_count'])
+    #     y = list(temp_table['count_forigner'])
+    #     r = correlation_coefficient(x, y)
+    #     print(r)
+
+    temp_tourspotvisitor_table = pd.DataFrame(temp_table.groupby('tourist_spot')['count_foreigner'].sum())
+    # print(temp_tourspotvisitor_table)
+
+    for filename in resultfiles['foreign_visitor']:
+        with open(filename, 'r', encoding='utf-8') as infile:
+            json_data = json.loads(infile.read())
+
+        foreignvisitor_table = pd.DataFrame(json_data, columns=['country_name', 'date', 'visit_count'])
+        foreignvisitor_table = foreignvisitor_table.set_index('date')
+
+        merge_table = pd.merge(temp_tourspotvisitor_table, foreignvisitor_table, left_index=True, right_index=True)
+        # print(merge_table)
+
+
+
+    #
+    #
+    # # result_analysis = analysis_correlation(resultfiles)
+    # graph_table = pd.DataFrame(result_analysis, colums=['tourspot', 'r_중국', 'r_일본', 'r_미국'])
+    # graph_table = graph_table.set_index('tourspot')
+    # print(graph_table)
+    #
+    # graph_table.plot(kind='bar')
+    # plt.show()

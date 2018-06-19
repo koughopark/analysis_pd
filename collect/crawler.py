@@ -2,6 +2,8 @@ from analysis_pd.collect.api import api
 import os
 import json
 
+RESULT_DIRECTORY = '__results__/crawling'
+
 
 def preprocess_tourspot_visitor(item):
     # addrCd
@@ -60,11 +62,11 @@ def preprocess_foreign_visitor(data):
     del data['rnum']
 
     # 나라코드
-    data['conutry_code'] = data['natCd']
+    data['country_code'] = data['natCd']
     del data['natCd']
 
     # 나라이름
-    data['conutry_name'] = data['natKorNm'].replace(' ', '')
+    data['country_name'] = data['natKorNm'].replace(' ', '')
     del data['natKorNm']
 
     # 방문자 수
@@ -73,9 +75,9 @@ def preprocess_foreign_visitor(data):
 
     # 년월
     if 'ym' not in data:
-        data['data'] = ''
+        data['date'] = ''
     else:
-        data['data'] = data['ym']
+        data['date'] = data['ym']
         del data['ym']
 
 
@@ -95,7 +97,7 @@ def crawling_foreign_visitor(country, start_year, end_year, fetch=True, result_d
 
         #   # save data to file
         filename = '%s/%s(%s)_foreignvisitor_%s_%s.json' % (
-        result_directory, country[0], country[1], start_year, end_year)
+            result_directory, country[0], country[1], start_year, end_year)
         with open(filename, 'w', encoding='utf-8') as outfile:
             json_string = json.dumps(results, indent=4, sort_keys=True, ensure_ascii=False)
             outfile.write(json_string)
