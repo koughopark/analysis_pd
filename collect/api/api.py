@@ -4,19 +4,16 @@ from .web_request import json_request
 import math
 
 
-
-SERVICE_KEY = 'bpU9ConJZs44J4b%2FbIStu29uOgtlQ%2Fvl%2BMma1RXL5c2vz8Wdayhg33wAmEqn51Mf2loTqXUr%2BGI9QsfMdFjKXQ%3D%3D'
-
-
-def pd_gen_url(endpoint, **param):
-    url = '%s?%s&serviceKey=%s' % (endpoint, urlencode(param), SERVICE_KEY)
+def pd_gen_url(endpoint, service_key, **param):
+    url = '%s?%s&serviceKey=%s' % (endpoint, urlencode(param), service_key)
     return url
 
 
-def pd_fetch_foreign_visitor(country_code, year, month):
+def pd_fetch_foreign_visitor(country_code, year, month, service_key=''):
     endpoint = 'http://openapi.tour.go.kr/openapi/service/EdrcntTourismStatsService/getEdrcntTourismStatsList'
     url = pd_gen_url(
         endpoint,
+        service_key,
         YM='{0:04d}{1:02d}'.format(year, month),
         NAT_CD=country_code,
         ED_CD='E',
@@ -38,13 +35,14 @@ def pd_fetch_foreign_visitor(country_code, year, month):
 
 
 # 지금 하는거
-def pd_fetch_tourspot_visitor(district1='', district2='', tourspot='', year=0, month=0):
+def pd_fetch_tourspot_visitor(district1='', district2='', tourspot='', year=0, month=0, service_key=''):
     endpoint = 'http://openapi.tour.go.kr/openapi/service/TourismResourceStatsService/getPchrgTrrsrtVisitorList'
     pageno = 1
     hasnext = True
 
     while hasnext is True:
         url = pd_gen_url(endpoint,
+                         service_key,
                          YM='{0:04d}{1:02d}'.format(year, month),
                          SIDO=district1,
                          GUNGU=district2,
@@ -56,6 +54,8 @@ def pd_fetch_tourspot_visitor(district1='', district2='', tourspot='', year=0, m
                          )
 
         json_result = json_request(url=url)
+        if json_result is None:
+            break
 
         json_response = None if json_result is None else json_result.get('response')
 
