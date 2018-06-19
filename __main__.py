@@ -18,7 +18,7 @@ if __name__ == '__main__':
 
 
 
-            # collect.crawling_tourspot_visitor(district='서울특별시', start_year=2017, end_year=2017)
+    collect.crawling_tourspot_visitor('서울특별시', start_year=2017, end_year=2017)
 
             # for country in [('중국', 112), ('일본', 130), ('미국', 275)]:
             #     collect.crawling_foreign_visitor(country, start_year=2017, end_year=2017)
@@ -31,12 +31,12 @@ if __name__ == '__main__':
 
     # 2. analysis and visualize
     # 함수 만들어야됨됨
-    # result_analysis = analyze.analysis_correlation_by_tourspot()
+    # result_analysis = analyze.analysis_correlation_by_tourspot(resultfiles)
     # graph_table = pd.DataFrame(result_analysis, colums=['tourspot', 'r_중국', 'r_일본', 'r_미국'])
     # graph_table = graph_table.set_index('tourspot')
     #
     # graph_table.plot(kind='bar')
-    # plot.show()
+    # plt.show()
 
 
 # tourspot r_중국 r_일본 r_미국

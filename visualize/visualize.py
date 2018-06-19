@@ -1,9 +1,8 @@
-import matplotlib as plt
+import matplotlib.pyplot as plt
 
 
 def graph_scatter(result_analysis):
     fig, subplots = plt.subplots(1, len(result_analysis), share=True)
-
 
     for index, result in enumerate(result_analysis):
         subplots[index].set_xlabel('{0}인 입국자수'.format(result['country_name']))

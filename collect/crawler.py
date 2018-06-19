@@ -3,33 +3,6 @@ import os
 import json
 
 
-RESULT_DIRECTORY = '__results__/crawling'
-
-pagename = 'jtbcnews'
-since = '2016-01-01'
-until = '2017-04-31'
-
-
-# url = fb_gen_url(endpoint=END_POINT, service_key=SERVICE_KEY,
-#                   resultCode='',
-#                   resultMsg='',
-#                   numOfRows='',
-#                   pageNo='',
-#                   totalCount='',
-#                   addrCd='',
-#                   csForCnt='',
-#                   scNatCnt='',
-#                   gungu='',
-#                   resNm='',
-#                   sido='',
-#                   ym='')
-
-def pd_gen_url(endpoint, **param):
-    url = '%s?%s&serviceKey=%s' % (endpoint, urlencode(param), SERVICE_KEY)
-    return url
-
-
-# ------------------------------------------------------
 def preprocess_tourspot_visitor(item):
     # addrCd
     del item['addrCd']
@@ -120,8 +93,9 @@ def crawling_foreign_visitor(country, start_year, end_year, fetch=True, result_d
                 preprocess_foreign_visitor(data)
                 results.append(data)
 
-    # save data to file
-        filename = '%s/%s(%s)_foreignvisitor_%s_%s.json' % (result_directory, country[0], country[1], start_year, end_year)
+        #   # save data to file
+        filename = '%s/%s(%s)_foreignvisitor_%s_%s.json' % (
+        result_directory, country[0], country[1], start_year, end_year)
         with open(filename, 'w', encoding='utf-8') as outfile:
             json_string = json.dumps(results, indent=4, sort_keys=True, ensure_ascii=False)
             outfile.write(json_string)
@@ -141,16 +115,16 @@ def crawling_tourspot_visitor(district, start_year, end_year, fetch=True, result
     if fetch:
         for year in range(start_year, end_year + 1):
             for month in range(1, 13):
-                for items in api.pd_fetch_tourspot_visitor(district1=district, year=year, month=month, service_key=service_key):
+                for items in api.pd_fetch_tourspot_visitor(district1=district, year=year, month=month,
+                                                           service_key=service_key):
                     for item in items:
                         preprocess_tourspot_visitor(item)
                     results += items  # 전처리 된 data가 쌓임
 
-
         # save items to file
         with open(filename, 'w', encoding='utf-8') as outfile:
-            json_string = json.dumps(results, indent=4, sort_keys=True,
-                                     ensure_ascii=False)  # json str으로 덤프하는 과정 텝을 4정도 주고 솔팅을 해라 모두 아스키코드로 해라
+            json_string = json.dumps(results, indent=4, sort_keys=True, ensure_ascii=False)
+            # json str으로 덤프하는 과정 텝을 4정도 주고 솔팅을 해라 모두 아스키코드로 해라
             outfile.write(json_string)
 
     return filename
