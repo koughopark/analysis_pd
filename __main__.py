@@ -1,7 +1,9 @@
 import collect
 import analyze
 import visualize
+import pandas as pd
 from config import CONFIG
+import matplotlib.pyplot as plt
 
 if __name__ == '__main__':
     resultfiles = dict()
@@ -29,13 +31,14 @@ if __name__ == '__main__':
     # 2. analysis and visualize
     # 함수 만들어야됨됨
     result_analysis = analyze.analysis_correlation_by_tourspot(resultfiles)
-    # visualize.graph_scatter(result_analysis)
+    # print(result_analysis)
+    #visualize.graph_scatter(result_analysis)
 
-    # graph_table = pd.DataFrame(result_analysis, colums=['tourspot', 'r_중국', 'r_일본', 'r_미국'])
-    # graph_table = graph_table.set_index('tourspot')
-    #
-    # graph_table.plot(kind='bar')
-    # plt.show()
+    graph_table = pd.DataFrame(result_analysis, columns=['tourspot', 'r_중국', 'r_일본', 'r_미국'])
+    graph_table = graph_table.set_index('tourspot')
+
+    graph_table.plot(kind='bar')
+    plt.show()
 
 # tourspot r_중국 r_일본 r_미국
 #  경복국   0.2    0.4    0.5
